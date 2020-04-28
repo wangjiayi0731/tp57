@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        /*取消文本域的拖拽功能*/
+        textarea{
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h3>请评论一下美国对待新型冠状病毒的做法</h3>
+    <msg-list :msg="msglist"></msg-list>
+    <add-msg @sendmsg="reveive"></add-msg>
+
+</div>
+<!--发布信息的模板-->
+<template id="add-msg">
+    <div>
+        标题：<input type="text" v-model="title"><br/><br/><br/>
+        内容： <textarea v-model="content" cols="30" rows="10"></textarea><br/>
+        <button @click="addMsg">发布</button>
+    </div>
+</template>
+<!--展示信息列表的模板-->
+<template id="msg-list">
+    <div>
+        <ul>
+            <li v-for="(item,index) in msg">
+                <p>{{index+1}}楼</p>
+                <h3>{{item.title}}</h3>
+                <p>{{item.content}}</p>
+            </li>
+        </ul>
+    </div>
+</template>
+<script src="vue.min.js"></script>
+<script>
+    // 添加模板对象
+    let AddMsg={
+        template:"#add-msg",
+        data(){
+            return {
+                title:'',
+                content:''
+            }
+        },
+        methods:{
+            addMsg() {
+                // 参数1是发送的函数名 参数2是传递的数据
+                this.$emit('sendmsg',{"title":this.title,"content":this.content});
+            }
+        }
+    }
+    // 展示信息列表的模板对象
+    let MsgList={
+        template:"#msg-list",
+        props:{
+            msg:{
+                type:Array
+            }
+        },
+        data(){
+            return {
+
+            }
+        },
+        methods:{
+
+        }
+    }
+    let app=new Vue({
+        el:"#app",
+        components:{
+            AddMsg:AddMsg,
+            MsgList:MsgList
+        },
+        data:{
+            msglist:[]
+        },
+        methods:{
+            reveive(res){
+                // [{title:"xx",content:'xx'},{title:"xx",content:'xx'},{}]
+                this.msglist.push(res);//把接收的信息对象插入到数组中去
+                // console.log(this.msglist);
+            }
+        }
+    })
+</script>
+</body>
+</html>
